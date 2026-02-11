@@ -1,0 +1,37 @@
+{
+  "name": "claude-usage-tracker",
+  "version": "1.4.0",
+  "description": "Track your Claude.ai daily and weekly usage limits",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "claude",
+    "usage",
+    "tracker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^24.37.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "electron": "^40.3.0",
+    "electron-builder": "^26.7.0"
+  },
+  "build": {
+    "appId": "com.claude.usage.tracker",
+    "productName": "Claude Usage Tracker",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    }
+  }
+}

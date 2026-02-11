@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Claude Usage Tracker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .usage-card {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 4px solid #667eea;
+    }
+
+    .usage-card h3 {
+      color: #2d3748;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .usage-bar {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .usage-fill {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .usage-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #4a5568;
+      margin-top: 5px;
+    }
+
+    .reset-time {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 5px;
+    }
+
+    .status {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .status.info {
+      background: #bee3f8;
+      color: #2c5282;
+    }
+
+    .status.success {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .status.error {
+      background: #fed7d7;
+      color: #742a2a;
+    }
+
+    .status.warning {
+      background: #feebc8;
+      color: #744210;
+    }
+
+    .button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3748;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .setup-section {
+      display: none;
+    }
+
+    .setup-section.active {
+      display: block;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      color: #718096;
+      font-size: 14px;
+      transition: color 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab:hover {
+      color: #4a5568;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #718096;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚡ Claude Usage Tracker</h1>
+      <p>Monitor your daily and weekly usage limits</p>
+    </div>
+
+    <div class="content">
+      <div class="tabs">
+        <div class="tab active" data-tab="dashboard">Dashboard</div>
+        <div class="tab" data-tab="settings">Settings</div>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="dashboard-tab" class="tab-content">
+        <div id="status-message" class="status info">
+          Click "Start Tracking" to begin monitoring your usage
+        </div>
+
+        <div id="usage-display" style="display: none;">
+          <div class="usage-card">
+            <h3>📅 Daily Usage</h3>
+            <div class="usage-bar">
+              <div id="daily-fill" class="usage-fill" style="width: 0%"></div>
+            </div>
+            <div class="usage-text">
+              <span id="daily-text">0 / 0 messages</span>
+              <span id="daily-percent">0%</span>
+            </div>
+            <div class="reset-time" id="daily-reset">Resets in: --</div>
+          </div>
+
+          <div class="usage-card">
+            <h3>📊 Weekly Usage</h3>
+            <div class="usage-bar">
+              <div id="weekly-fill" class="usage-fill" style="width: 0%"></div>
+            </div>
+            <div class="usage-text">
+              <span id="weekly-text">0 / 0 messages</span>
+              <span id="weekly-percent">0%</span>
+            </div>
+            <div class="reset-time" id="weekly-reset">Resets in: --</div>
+          </div>
+
+          <div style="text-align: center; color: #718096; font-size: 12px; margin-top: 15px;">
+            Last updated: <span id="last-updated">Never</span>
+          </div>
+        </div>
+
+        <button id="start-btn" class="button">Start Tracking</button>
+        <button id="stop-btn" class="button" style="display: none;">Stop Tracking</button>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings-tab" class="tab-content" style="display: none;">
+        <div id="setup-section" class="setup-section active">
+          <div class="info-text">
+            <strong>⚠️ Important Setup Instructions:</strong><br><br>
+            1. This app will open Chrome and navigate to Claude.ai<br>
+            2. You'll need to log in manually in the browser window<br>
+            3. Once logged in, the app will check your usage every 5 minutes<br>
+            4. Keep the browser window in the background<br><br>
+            <strong>Note:</strong> This is a workaround since Claude doesn't have a public API for usage data. The scraping may break if Claude.ai's layout changes.
+          </div>
+
+          <button id="setup-btn" class="button">Initialize Browser & Login</button>
+
+          <div class="info-text" style="margin-top: 20px; padding: 15px; background: #fff5f5; border-left: 4px solid #fc8181; border-radius: 6px;">
+            <strong>⚠️ Browser stuck or not responding?</strong><br>
+            Use this button to force-close all browser processes and start fresh.
+          </div>
+
+          <button id="force-restart-btn" class="button" style="background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);">Force Restart Browser</button>
+        </div>
+
+        <div class="info-text" style="margin-top: 20px;">
+          <strong>How it works:</strong><br>
+          • Checks your Claude.ai usage every 5 minutes<br>
+          • Displays usage in the menu bar<br>
+          • Shows time until daily/weekly reset<br>
+          • Runs in the background
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
