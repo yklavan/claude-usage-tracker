@@ -269,7 +269,11 @@ function updateUsageDisplay(data) {
   }
   
   if (data.dailyReset) {
-    document.getElementById('daily-reset').textContent = `Resets in: ${data.dailyReset}`;
+    if (data.dailyReset.startsWith('Now')) {
+      document.getElementById('daily-reset').textContent = `Resets: ${data.dailyReset}`;
+    } else {
+      document.getElementById('daily-reset').textContent = `Resets in: ${data.dailyReset}`;
+    }
   }
   
   if (data.weeklyReset) {

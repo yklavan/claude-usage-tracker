@@ -1,6 +1,6 @@
 {
   "name": "claude-usage-tracker",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Track your Claude.ai daily and weekly usage limits",
   "main": "main.js",
   "scripts": {

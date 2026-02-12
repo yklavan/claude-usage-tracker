@@ -334,7 +334,14 @@ class ClaudeScraper {
         console.log('Parsed weekly:', weekly);
       }
 
-      var dailyResetText = dailyResetMatch ? dailyResetMatch[1].trim() : 'Unknown';
+      var dailyResetText;
+      if (dailyResetMatch) {
+        dailyResetText = dailyResetMatch[1].trim();
+      } else if (currentSessionMatch && parseInt(currentSessionMatch[1]) === 0) {
+        dailyResetText = 'Now (no active session)';
+      } else {
+        dailyResetText = 'Unknown';
+      }
       var weeklyResetText = weeklyResetMatch ? weeklyResetMatch[1].trim() : 'Unknown';
 
       console.log('Daily reset:', dailyResetText);

@@ -117,8 +117,10 @@ function updateTrayMenu(usageData) {
     },
     { type: 'separator' },
     { 
-      label: usageData.dailyReset 
-        ? `Daily resets in: ${usageData.dailyReset}`
+      label: usageData.dailyReset
+        ? (usageData.dailyReset.startsWith('Now')
+          ? `Daily resets: ${usageData.dailyReset}`
+          : `Daily resets in: ${usageData.dailyReset}`)
         : 'Daily resets in: Unknown', 
       enabled: true 
     },
